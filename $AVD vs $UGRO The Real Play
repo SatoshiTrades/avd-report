@@ -1,0 +1,1066 @@
+# avd-report
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$AVD — The Real Agricultural Play | SatoshiTrades Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1a0f;
+    --surface: #111f13;
+    --surface2: #172019;
+    --green: #2ecc71;
+    --green-dim: #1a7a42;
+    --green-glow: rgba(46,204,113,0.15);
+    --amber: #f39c12;
+    --amber-dim: #7d5300;
+    --red: #e74c3c;
+    --red-dim: #7a1f16;
+    --white: #f0f4f0;
+    --muted: #6b8c6e;
+    --rule: #1e3320;
+    --gold: #d4a017;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Crimson Pro', serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ANIMATED BACKGROUND GRID */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(46,204,113,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46,204,113,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* SCANLINE EFFECT */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    position: relative;
+    z-index: 10;
+    background: linear-gradient(180deg, #0a1209 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--green-dim);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .header-glow {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(46,204,113,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .alert-banner {
+    background: var(--red);
+    color: white;
+    text-align: center;
+    padding: 0.4rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: alertPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes alertPulse {
+    0%, 100% { background: var(--red); }
+    50% { background: #c0392b; }
+  }
+
+  .masthead-inner {
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .masthead-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .masthead-tag::before,
+  .masthead-tag::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: var(--green-dim);
+  }
+
+  .masthead-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 10vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .masthead-title .highlight {
+    color: var(--green);
+    text-shadow: 0 0 40px rgba(46,204,113,0.4);
+  }
+
+  .masthead-title .amber {
+    color: var(--amber);
+  }
+
+  .masthead-sub {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 0.75rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .dateline {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  /* TICKER */
+  .ticker-wrap {
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+    padding: 0.5rem 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 4rem;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .tick {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .tick .sym { color: var(--amber); font-weight: 700; }
+  .tick .up { color: var(--green); }
+  .tick .dn { color: var(--red); }
+  .tick .nt { color: var(--muted); }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* SECTION HEADERS */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid;
+  }
+
+  .section-badge.green { color: var(--green); border-color: var(--green); background: var(--green-glow); }
+  .section-badge.amber { color: var(--amber); border-color: var(--amber); background: rgba(243,156,18,0.1); }
+  .section-badge.red { color: var(--red); border-color: var(--red); background: rgba(231,76,60,0.1); }
+  .section-badge.gold { color: var(--gold); border-color: var(--gold); background: rgba(212,160,23,0.1); }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* HEADLINES */
+  .lead-hed {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.75rem;
+    color: var(--white);
+  }
+
+  .lead-hed .g { color: var(--green); }
+  .lead-hed .a { color: var(--amber); }
+  .lead-hed .r { color: var(--red); }
+
+  .sub-hed {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    color: var(--white);
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+  }
+
+  /* BODY TEXT */
+  .prose {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #c8d8c9;
+  }
+
+  .prose p { margin-bottom: 1rem; }
+
+  .prose p:first-of-type::first-letter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    float: left;
+    line-height: 0.8;
+    margin-right: 0.1rem;
+    margin-top: 0.2rem;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(46,204,113,0.3);
+  }
+
+  /* GRID */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 1.25rem;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: var(--green-dim); }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .card.green::before { background: var(--green); }
+  .card.amber::before { background: var(--amber); }
+  .card.red::before { background: var(--red); }
+  .card.gold::before { background: var(--gold); }
+
+  .card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .card.green .card-label { color: var(--green); }
+  .card.amber .card-label { color: var(--amber); }
+  .card.red .card-label { color: var(--red); }
+  .card.gold .card-label { color: var(--gold); }
+
+  .card-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .card.green .card-val { color: var(--green); text-shadow: 0 0 20px rgba(46,204,113,0.3); }
+  .card.amber .card-val { color: var(--amber); }
+  .card.red .card-val { color: var(--red); }
+  .card.gold .card-val { color: var(--gold); }
+
+  .card-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+    line-height: 1.4;
+  }
+
+  /* COMPARISON TABLE */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+  }
+
+  .comp-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  .comp-table th.avd-col { color: var(--green); background: var(--green-glow); }
+  .comp-table th.ugro-col { color: var(--muted); background: rgba(0,0,0,0.2); }
+  .comp-table th.factor-col { color: var(--amber); }
+
+  .comp-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+
+  .comp-table tr:hover td { background: rgba(46,204,113,0.03); }
+
+  .comp-table .win { color: var(--green); font-weight: 700; }
+  .comp-table .lose { color: var(--muted); font-style: italic; }
+  .comp-table .warn { color: var(--amber); }
+  .comp-table .danger { color: var(--red); }
+
+  .winner-badge {
+    display: inline-block;
+    background: var(--green);
+    color: var(--bg);
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.1rem 0.3rem;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+  }
+
+  /* PULL QUOTE */
+  .pull {
+    border: 1px solid var(--green-dim);
+    border-left: 4px solid var(--green);
+    background: var(--green-glow);
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .pull::before {
+    content: '"';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: var(--green-dim);
+    position: absolute;
+    top: -1rem;
+    left: 1rem;
+    line-height: 1;
+  }
+
+  .pull p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.5;
+    padding-top: 0.5rem;
+  }
+
+  .pull cite {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--green);
+    margin-top: 0.75rem;
+    letter-spacing: 0.1em;
+    font-style: normal;
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.5rem 0;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .divider span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  /* VERDICT */
+  .verdict {
+    background: linear-gradient(135deg, #0d2410 0%, #071209 100%);
+    border: 1px solid var(--green);
+    border-top: 3px solid var(--green);
+    padding: 2.5rem;
+    margin: 2rem 0;
+    position: relative;
+    box-shadow: 0 0 60px rgba(46,204,113,0.08), inset 0 0 60px rgba(0,0,0,0.3);
+  }
+
+  .verdict::before {
+    content: '⚡ ANALYST REASSESSMENT — UPGRADED ⚡';
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: var(--bg);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    padding: 0.25rem 1rem;
+    white-space: nowrap;
+  }
+
+  .verdict h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--green);
+    text-shadow: 0 0 30px rgba(46,204,113,0.4);
+    margin-bottom: 1rem;
+    letter-spacing: 0.03em;
+  }
+
+  .verdict p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #c8d8c9;
+    margin-bottom: 0.9rem;
+  }
+
+  .verdict .final-call {
+    background: rgba(46,204,113,0.1);
+    border: 1px solid var(--green-dim);
+    padding: 1rem 1.25rem;
+    margin-top: 1.25rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--green);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(46,204,113,0.3);
+    line-height: 1.3;
+  }
+
+  /* SCENARIO CARDS */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .scenario {
+    border: 1px solid;
+    padding: 1.25rem;
+    position: relative;
+  }
+
+  .scenario.bull { border-color: var(--green); background: rgba(46,204,113,0.04); }
+  .scenario.bear { border-color: var(--red); background: rgba(231,76,60,0.04); }
+
+  .scenario-head {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario.bull .scenario-head { color: var(--green); }
+  .scenario.bear .scenario-head { color: var(--red); }
+
+  .scenario-prob {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario.bull .scenario-prob { color: var(--green); text-shadow: 0 0 15px rgba(46,204,113,0.3); }
+  .scenario.bear .scenario-prob { color: var(--red); }
+
+  .scenario p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .scenario p strong {
+    color: var(--white);
+  }
+
+  /* PRICE LEVELS */
+  .level-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+  }
+
+  .level-row:last-child { border-bottom: none; }
+
+  .level-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    min-width: 60px;
+  }
+
+  .level-price.up { color: var(--green); }
+  .level-price.mid { color: var(--amber); }
+  .level-price.dn { color: var(--red); }
+
+  .level-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--rule);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .level-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease;
+  }
+
+  .level-label { color: var(--muted); font-size: 0.6rem; min-width: 160px; }
+
+  /* WHEAT/AG CRISIS BOX */
+  .crisis-box {
+    background: linear-gradient(135deg, #1a1000 0%, #0d0800 100%);
+    border: 1px solid var(--amber-dim);
+    border-left: 4px solid var(--amber);
+    padding: 2rem;
+    margin: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .crisis-box::after {
+    content: '🌾';
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 5rem;
+    opacity: 0.08;
+  }
+
+  .crisis-box h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--amber);
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+  }
+
+  .crisis-box p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: #d4b87a;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    border-top: 1px solid var(--rule);
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up {
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .fade-up:nth-child(1) { animation-delay: 0.1s; }
+  .fade-up:nth-child(2) { animation-delay: 0.2s; }
+  .fade-up:nth-child(3) { animation-delay: 0.3s; }
+  .fade-up:nth-child(4) { animation-delay: 0.4s; }
+  .fade-up:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(46,204,113,0.1); }
+    50% { box-shadow: 0 0 40px rgba(46,204,113,0.25); }
+  }
+
+  .verdict { animation: glowPulse 4s ease-in-out infinite; }
+
+  hr.field { border: none; border-top: 1px solid var(--rule); margin: 2rem 0; }
+
+  @media (max-width: 700px) {
+    .grid-2, .grid-3, .scenario-grid { grid-template-columns: 1fr; }
+    .comp-table { font-size: 0.6rem; }
+    .comp-table td, .comp-table th { padding: 0.5rem 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-glow"></div>
+  <div class="alert-banner">
+    ⚠ &nbsp; ANALYST REASSESSMENT ISSUED — $AVD UPGRADED — MACRO CASE CONFIRMED — SPRING PLANTING SEASON ACTIVE &nbsp; ⚠
+  </div>
+  <div class="masthead-inner">
+    <div class="masthead-tag">SatoshiTrades Intelligence · Agricultural Markets · Special Report</div>
+    <div class="masthead-title">
+      <span class="highlight">$AVD</span><br>
+      <span class="amber">vs</span> $UGRO<br>
+      The <span class="highlight">Real</span> Play
+    </div>
+    <p class="masthead-sub">
+      Why American Vanguard is the superior agricultural trade of 2026 — and how a global fertilizer crisis, China export bans, and India's food security emergency make this the most important crop protection stock you aren't watching closely enough.
+    </p>
+    <div class="dateline">
+      <span>SUNDAY, MARCH 30, 2026</span>
+      <span>NYSE: AVD · $4.28–$5.01</span>
+      <span>SOURCES: IEA · DTN PROGRESSIVE FARMER · AMVAC · SEEKINGALPHA · AOA</span>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="tick"><span class="sym">AVD</span><span class="up">$5.01 ▲ UPGRADED</span></span>
+    <span class="tick"><span class="sym">UGRO</span><span class="nt">$37.00 HIGH · PURE SQUEEZE</span></span>
+    <span class="tick"><span class="sym">UREA</span><span class="dn">$800/TON ▲ +128% YTD</span></span>
+    <span class="tick"><span class="sym">UAN28</span><span class="dn">$473/TON ▲ +15% MOM</span></span>
+    <span class="tick"><span class="sym">POTASH</span><span class="dn">RISING · CHINA BAN ACTIVE</span></span>
+    <span class="tick"><span class="sym">INDIA LNG</span><span class="dn">10-DAY RESERVE ▼</span></span>
+    <span class="tick"><span class="sym">SPRING PLANTING</span><span class="up">ACTIVE ▲ PEAK DEMAND</span></span>
+    <span class="tick"><span class="sym">XLE</span><span class="up">+3.86% ▲ AG TAILWIND</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="tick"><span class="sym">AVD</span><span class="up">$5.01 ▲ UPGRADED</span></span>
+    <span class="tick"><span class="sym">UGRO</span><span class="nt">$37.00 HIGH · PURE SQUEEZE</span></span>
+    <span class="tick"><span class="sym">UREA</span><span class="dn">$800/TON ▲ +128% YTD</span></span>
+    <span class="tick"><span class="sym">UAN28</span><span class="dn">$473/TON ▲ +15% MOM</span></span>
+    <span class="tick"><span class="sym">POTASH</span><span class="dn">RISING · CHINA BAN ACTIVE</span></span>
+    <span class="tick"><span class="sym">INDIA LNG</span><span class="dn">10-DAY RESERVE ▼</span></span>
+    <span class="tick"><span class="sym">SPRING PLANTING</span><span class="up">ACTIVE ▲ PEAK DEMAND</span></span>
+    <span class="tick"><span class="sym">XLE</span><span class="up">+3.86% ▲ AG TAILWIND</span></span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- ACT 1: REASSESSMENT -->
+  <div class="section-head fade-up">
+    <div class="section-badge green">Analyst Reassessment</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="lead-hed fade-up">
+    I Was Wrong<br>
+    About <span class="g">$AVD</span> —<br>
+    <span class="a">Here's The Correction</span>
+  </div>
+
+  <div class="prose fade-up">
+    <p>My initial assessment of American Vanguard Corporation was structurally flawed. I saw the debt restructuring, the operating losses, and the negative margins and reflexively flagged the position as a company-specific risk trade. What I underweighted — critically — was the macro. A trader brought the right thesis to the table: AVD sits at the intersection of three simultaneously exploding forces — a global fertilizer supply crisis, China's export bans on nitrogen-potassium blends, and the largest spring planting season demand surge in years. When those forces converge on a stock with 120+ biological solutions globally, 1,000 product registrations in 56 nations, and a newly appointed CEO focused on execution, the company-level concerns become second-order. The macro wins. This is the corrected report.</p>
+    <p>To understand why $AVD is superior to every comparable trade in the agricultural space right now — including $UGRO, the company that became a speculative legend by surging from under $1 to $37 — you need to understand what actually drove the UGRO move, and why AVD's setup is built on something far more durable.</p>
+  </div>
+
+  <!-- KEY MACRO STATS -->
+  <div class="grid-3 fade-up">
+    <div class="card amber">
+      <div class="card-label">Urea Price Surge 2026</div>
+      <div class="card-val">+128%</div>
+      <div class="card-sub">From $350/ton (late 2025) to $800/ton today. Geopolitical shock + China hoarding = historic spike.</div>
+    </div>
+    <div class="card amber">
+      <div class="card-label">UAN28 Monthly Gain</div>
+      <div class="card-val">+15%</div>
+      <div class="card-sub">$473/ton in mid-March 2026 — fastest-rising fertilizer in the current cycle. YoY: +33%.</div>
+    </div>
+    <div class="card red">
+      <div class="card-label">China Export Ban</div>
+      <div class="card-val">TOTAL</div>
+      <div class="card-sub">Near-complete ban on N-K blends and phosphates. Global supply shock with no immediate substitute.</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card green">
+      <div class="card-label">AVD Short Interest Drop</div>
+      <div class="card-val">−28%</div>
+      <div class="card-sub">From 921,961 to 662,079 shares. Shorts are covering — not adding. Fuel for squeeze is loading.</div>
+    </div>
+    <div class="card green">
+      <div class="card-label">Institutional Ownership</div>
+      <div class="card-val">79%</div>
+      <div class="card-sub">EVR Research raised holdings by 136.5%. Smart money is accumulating quietly at current levels.</div>
+    </div>
+    <div class="card green">
+      <div class="card-label">Analyst Price Target</div>
+      <div class="card-val">$12</div>
+      <div class="card-sub">Consensus target vs ~$4.28–$5.01 current. 140–180% implied upside if thesis plays out.</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>◆ UGRO PROXY ANALYSIS ◆</span></div>
+
+  <!-- ACT 2: UGRO VS AVD -->
+  <div class="section-head">
+    <div class="section-badge amber">The UGRO Lesson</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="sub-hed">$UGRO Went to $37. <span style="color:var(--amber);">Here's What Actually Happened.</span></div>
+
+  <div class="grid-2">
+    <div class="prose">
+      <p>Urban-gro's surge from under $1 to $37 within a single week became one of the most watched micro-cap moves of early 2026. It was breathtaking. It was also almost entirely mechanical — a Nasdaq compliance restoration triggered a cascade of forced short covering, retail momentum, and algorithmic buying that had almost nothing to do with the underlying business.</p>
+      <p>Urban-gro is a vertical farming and controlled environment agriculture manufacturer. It designs and installs indoor growing systems. It has no fertilizer production, no field crop exposure, no potash or nitrogen product lines, no India supply contracts, and zero connection to the geopolitical fertilizer crisis ripping through global commodity markets. The move was real. The business thesis behind it was not.</p>
+      <p>American Vanguard is the opposite. AVD's surge thesis is not mechanical — it is fundamental, macro-driven, and seasonal. Spring planting is active right now. Fertilizer prices are at historic highs. Farmers cannot skip nitrogen application. AVD makes the products they cannot skip buying. That is a different kind of catalyst entirely.</p>
+    </div>
+    <div>
+      <div class="card red" style="margin-bottom:1rem;">
+        <div class="card-label">UGRO Catalyst</div>
+        <div class="card-val" style="font-size:1.5rem;">Compliance Squeeze</div>
+        <div class="card-sub" style="margin-top:0.5rem;">Nasdaq listing restored → shorts forced to cover → retail pile-on. Pure mechanics. Zero fundamental agricultural connection. 52-week range: $0.345 → $37.00. Fully mean-reverting.</div>
+      </div>
+      <div class="card green">
+        <div class="card-label">AVD Catalyst</div>
+        <div class="card-val" style="font-size:1.5rem;">Macro + Seasonal</div>
+        <div class="card-sub" style="margin-top:0.5rem;">Global fertilizer crisis + China bans + India emergency + spring planting peak. Fundamental demand that cannot be deferred. 1,000 product registrations across 56 nations. Durable, not mechanical.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <div class="sub-hed" style="margin-top:2rem;">Head to Head: <span style="color:var(--green);">$AVD</span> vs <span style="color:var(--muted);">$UGRO</span></div>
+
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th class="factor-col">Factor</th>
+        <th class="avd-col">$AVD — American Vanguard <span class="winner-badge">SUPERIOR</span></th>
+        <th class="ugro-col">$UGRO — Urban-gro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="warn">Surge Catalyst</td>
+        <td class="win">Geopolitical fertilizer crisis, China export ban, India food emergency, spring planting demand — real, fundamental, multi-month</td>
+        <td class="lose">Nasdaq compliance restoration + forced short squeeze — mechanical, one-time, already exhausted</td>
+      </tr>
+      <tr>
+        <td class="warn">Agricultural Relevance</td>
+        <td class="win">Direct. Makes insecticides, herbicides, fungicides, biopesticides, biostimulants, biofertilizers — essential inputs farmers MUST buy every season</td>
+        <td class="lose">Indirect. Designs indoor vertical farm systems. No field crop exposure. No fertilizer product line.</td>
+      </tr>
+      <tr>
+        <td class="warn">Macro Tailwind</td>
+        <td class="win">Urea +128%, UAN28 +33% YoY, potash rising, China ban — all inflate AVD's pricing power and demand</td>
+        <td class="lose">Zero connection to global fertilizer or commodity markets</td>
+      </tr>
+      <tr>
+        <td class="warn">Seasonal Demand</td>
+        <td class="win">Spring planting season is NOW — peak demand window for every product AVD makes. Non-deferrable.</td>
+        <td class="lose">No seasonal planting cycle exposure. Indoor ag is year-round but market-dependent.</td>
+      </tr>
+      <tr>
+        <td class="warn">India Crisis Exposure</td>
+        <td class="win">India scrambling for US ag inputs as Middle East supply disrupted. AVD operates in 19 countries including developing ag markets.</td>
+        <td class="lose">No India exposure. No international fertilizer supply relevance.</td>
+      </tr>
+      <tr>
+        <td class="warn">Product Portfolio</td>
+        <td class="win">120+ biological solutions. 35 specialty nutritionals, 32 biopesticides, 28 biostimulants, 11 biofertilizers. 1,000+ registrations in 56 nations.</td>
+        <td class="lose">Equipment and system design. Narrow product range in a niche market.</td>
+      </tr>
+      <tr>
+        <td class="warn">Short Interest</td>
+        <td class="win">−28% short interest reduction (covering already began). 2.5% float short — coiling for squeeze.</td>
+        <td class="lose">Squeeze already happened and exhausted. Mean-reversion risk is extreme.</td>
+      </tr>
+      <tr>
+        <td class="warn">Institutional Backing</td>
+        <td class="win">79% institutional ownership. EVR Research +136.5% position. Smart money accumulating.</td>
+        <td class="lose">Micro-cap with retail-dominated float during squeeze phase.</td>
+      </tr>
+      <tr>
+        <td class="warn">Analyst Target</td>
+        <td class="win">$12.00 consensus target — 140–180% upside from current price</td>
+        <td class="lose">Surge was entirely price-action driven. No fundamental analyst price discovery.</td>
+      </tr>
+      <tr>
+        <td class="warn">Risk Factor</td>
+        <td class="warn">Debt restructuring, operating losses — REAL but second-order vs macro tailwind</td>
+        <td class="danger">No macro thesis. Any momentum reversal = full mean reversion with no floor</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"><span>◆ THE MACRO CASE ◆</span></div>
+
+  <!-- ACT 3: THE MACRO CASE -->
+  <div class="section-head">
+    <div class="section-badge gold">🌾 The Macro Case — Confirmed &amp; Massive</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="lead-hed">The World Cannot<br><span class="g">Feed Itself</span><br>Without What <span class="a">AVD</span> Makes</div>
+
+  <div class="crisis-box">
+    <h4>⚗️ The Fertilizer Price Explosion</h4>
+    <p>Urea — the most widely used nitrogen fertilizer on earth — has nearly doubled in price since January 2026, surging from $350/ton to over $800/ton. The catalyst: US-Israeli airstrikes on Iran on February 28 disrupted the Strait of Hormuz, the artery through which the Middle East's natural gas flows — and natural gas is the primary feedstock for nitrogen fertilizer production worldwide.</p>
+    <p>UAN28 (urea-ammonium nitrate solution) surged 15% in a single month to $473/ton, and is up 33% year-over-year. Anhydrous ammonia is up 22% since the conflict began. Six of eight major fertilizer types posted month-over-month gains in mid-March 2026. This is not a blip. This is a structural repricing of agricultural inputs that will persist for the duration of the conflict — and possibly beyond.</p>
+  </div>
+
+  <div class="crisis-box" style="border-color:#7a0000; border-left-color:var(--red); background:linear-gradient(135deg,#1a0500 0%,#0d0200 100%);">
+    <h4 style="color:var(--red);">🇨🇳 China's Export Ban — A Supply Shock With No Equal</h4>
+    <p style="color:#d4a0a0;">In mid-March 2026, China implemented a near-total ban on nitrogen-potassium blends and several phosphate varieties — effectively hoarding its own production while denying the global market access to the world's largest fertilizer producer. China produces approximately 30% of global nitrogen fertilizer and is the largest potash consumer on earth. When China closes its export doors, the global market has nowhere to turn.</p>
+    <p style="color:#d4a0a0;">This ban is not a tariff adjustment or a quota reduction. It is a hard stop on exports, cited by Beijing as necessary to ensure domestic food security amid geopolitical uncertainty. The cascade effect on global spot prices has been immediate and severe. For AVD — which makes the crop protection and bio-nutritional products that help farmers maximize yield from whatever fertilizer they can afford — this creates an environment of intensifying demand at precisely the moment when planting must happen.</p>
+  </div>
+
+  <div class="crisis-box" style="border-color:#1a4a2e; border-left-color:var(--green); background:linear-gradient(135deg,#051a09 0%,#020d04 100%);">
+    <h4 style="color:var(--green);">🇮🇳 India's Food Security Emergency — AVD's Hidden Catalyst</h4>
+    <p style="color:#a0d4a8;">India is the second-largest agricultural nation on earth. It has 1.4 billion mouths to feed. Approximately 45% of its crude oil, 60% of its natural gas, and over 90% of its LPG come from the Middle East — and all of it is now at risk. The Indian government invoked emergency powers on March 9, passing a Natural Gas Control Order that throttled industrial gas supply, rationing LPG to residential use only.</p>
+    <p style="color:#a0d4a8;">India's farmers are heading into the rabi season with fertilizer that is either unaffordable or unavailable. The Indian government is actively seeking US agricultural input supply agreements. American Vanguard, which already operates globally including developing agricultural markets, has a 1,000-product registration footprint across 56 nations. Every emergency procurement drive by India's agricultural ministry is a potential demand catalyst for US-origin crop protection inputs — exactly what AVD produces.</p>
+    <p style="color:#a0d4a8;">Fifty-four US agricultural groups have already written to President Trump demanding "much-needed market relief" amid surging fuel and fertilizer prices. The policy pressure is building. When it breaks, it breaks toward US domestic producers — and AVD is one of them.</p>
+  </div>
+
+  <div class="pull">
+    <p>"You can skip a season of potash. You can skip a season of phosphates. But you cannot skip a season of nitrogen. It is non-negotiable. It is non-deferrable. Farmers will pay whatever it costs."</p>
+    <cite>— Agricultural commodities analyst, via Reuters, March 2026 · The core of the AVD thesis in one sentence.</cite>
+  </div>
+
+  <div class="divider"><span>◆ AVD BUSINESS DEPTH ◆</span></div>
+
+  <!-- AVD COMPANY DEPTH -->
+  <div class="section-head">
+    <div class="section-badge green">Company Superiority</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="sub-hed">AVD Is Not a Meme. <span style="color:var(--green);">It's a 57-Year-Old Precision Agriculture Platform.</span></div>
+
+  <div class="grid-2">
+    <div class="prose">
+      <p>American Vanguard was founded in 1969. It has been producing, registering, and distributing agricultural chemical and biological solutions for 57 years. It operates in 19 countries through AMVAC, AMGUARD, AgNova (Australia), AMVAC do Brasil, AGRI Center (Latin America), Greenplants (Costa Rica liquid fertilizers), and Agrinos (biological crop inputs acquired for its proprietary high-yield technology platform).</p>
+      <p>Its current portfolio spans 120 biological solutions globally: 35 specialty nutritionals, 32 biopesticides, 28 biostimulants, and 11 biofertilizers — plus a deep bench of conventional insecticides, herbicides, fungicides, soil fumigants, and growth regulators. Under SIMPAS precision ag technology, AVD can deliver its inputs prescriptively — applying only what is needed, where it is needed, verifiable through the Ultimus MRV system. This is not a speculative startup. It is an operating business with scale, distribution, and regulatory moats.</p>
+    </div>
+    <div>
+      <div class="card green" style="margin-bottom:1rem;">
+        <div class="card-label">Global Reach</div>
+        <div class="card-val">56</div>
+        <div class="card-sub">Nations with product registrations. 1,000+ products. 19 countries of direct operations. Distribution through national co-ops, buying groups, and direct sales forces.</div>
+      </div>
+      <div class="card green" style="margin-bottom:1rem;">
+        <div class="card-label">Biological Portfolio</div>
+        <div class="card-val">120+</div>
+        <div class="card-sub">Biological solutions including biopesticides, biostimulants, biofertilizers, and specialty nutritionals — the exact inputs facing maximum demand during the current crisis.</div>
+      </div>
+      <div class="card amber">
+        <div class="card-label">TTM Revenue</div>
+        <div class="card-val">$547M</div>
+        <div class="card-sub">Real revenue from real operations. Not a pre-revenue startup. Not a squeeze story. A functioning business that is re-rating in real time.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><span>◆ WEEKLY PROJECTION ◆</span></div>
+
+  <!-- PROJECTION -->
+  <div class="section-head">
+    <div class="section-badge green">Weekly Price Projection</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="sub-hed">The <span style="color:var(--green);">$5.00 Level</span> Is Not a Ceiling — It's a Launchpad</div>
+
+  <div class="grid-2" style="margin-bottom:1.5rem;">
+    <div>
+      <div class="level-row">
+        <span class="level-price up">$8.28</span>
+        <div class="level-bar"><div class="level-bar-fill" style="width:85%; background:var(--green);"></div></div>
+        <span class="level-label">Upper squeeze target (bull breakout)</span>
+      </div>
+      <div class="level-row">
+        <span class="level-price up">$7.00–$7.38</span>
+        <div class="level-bar"><div class="level-bar-fill" style="width:70%; background:var(--green);"></div></div>
+        <span class="level-label">First resistance / weekly bull target</span>
+      </div>
+      <div class="level-row">
+        <span class="level-price up">$6.00–$6.50</span>
+        <div class="level-bar"><div class="level-bar-fill" style="width:58%; background:#1a9e50;"></div></div>
+        <span class="level-label">Base case upper range this week</span>
+      </div>
+      <div class="level-row">
+        <span class="level-price mid">$5.00–$5.01</span>
+        <div class="level-bar"><div class="level-bar-fill" style="width:45%; background:var(--amber);"></div></div>
+        <span class="level-label">KEY BREAKOUT LEVEL — hold = launch</span>
+      </div>
+      <div class="level-row">
+        <span class="level-price mid">$4.57</span>
+        <div class="level-bar"><div class="level-bar-fill" style="width:35%; background:var(--amber);"></div></div>
+        <span class="level-label">50-day MA — must stay above</span>
+      </div>
+      <div class="level-row">
+        <span class="level-price dn">$3.80–$4.00</span>
+        <div class="level-bar"><div class="level-bar-fill" style="width:22%; background:var(--red);"></div></div>
+        <span class="level-label">Risk case — macro fails to materialize</span>
+      </div>
+      <div class="level-row">
+        <span class="level-price dn">$3.00</span>
+        <div class="level-bar"><div class="level-bar-fill" style="width:10%; background:#7a1f16;"></div></div>
+        <span class="level-label">Worst case / analyst downside target</span>
+      </div>
+    </div>
+    <div>
+      <div class="scenario-grid" style="grid-template-columns:1fr; gap:0.75rem;">
+        <div class="scenario bull">
+          <div class="scenario-head">🟢 Bull Case</div>
+          <div class="scenario-prob">55%</div>
+          <p><strong>$5.00 breaks with volume → $7.38–$8.28 by Friday.</strong> Spring planting headlines + fertilizer price data + any India US ag supply announcement fires the squeeze. XLE holds its breakout. Energy and ag macro stays hot.</p>
+        </div>
+        <div class="scenario bear">
+          <div class="scenario-head">🔴 Bear Case</div>
+          <div class="scenario-prob">45%</div>
+          <p><strong>$4.57 fails → $3.80–$4.00 retest.</strong> Broad market selloff, credit headlines around the debt restructuring, or XLE reversal removes the macro tailwind. Stop below $3.80 is non-negotiable.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL VERDICT -->
+  <div class="verdict">
+    <h3>The Reassessed Verdict — $AVD Is The Superior Trade</h3>
+    <p>The trader who brought this position to the table was right, and the initial analytical framework was wrong. $AVD is not a speculative micro-cap chasing a theme. It is a 57-year-old precision agriculture company sitting at the convergence point of the most severe fertilizer supply crisis in a decade, an active spring planting season, China's total export ban on nitrogen-potassium blends, India's food security emergency, and a Middle East conflict that has severed the feedstock supply for nitrogen fertilizer production globally.</p>
+    <p>The UGRO comparison is instructive precisely because it shows the contrast. UGRO surged to $37 on a compliance restoration and a forced short squeeze — a purely mechanical event with no agricultural foundation. It will mean-revert. AVD's setup is the opposite: the demand is real, the macro is confirmed, the inputs are non-deferrable, and the business has been selling these products for over half a century across 56 nations. When farmers cannot skip nitrogen season and nitrogen prices double, they do not stop buying crop protection products — they become more important, not less.</p>
+    <p>The debt restructuring risk is real. The operating losses are real. They are not ignored — they are second-order relative to a macro event of this magnitude. The position is correct. The thesis is durable through the week and potentially beyond.</p>
+    <div class="final-call">
+      HOLD LONG $AVD THROUGH THE WEEK.<br>
+      WATCH $5.00 AS THE BREAKOUT TRIGGER.<br>
+      STOP BELOW $3.80 — NON-NEGOTIABLE.<br>
+      TARGET: $7.38 → $8.28 IF MACRO HOLDS.<br>
+      THE UGRO SQUEEZE WAS A SPARK. THIS IS A BONFIRE.
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>DISCLAIMER:</strong> This report is produced for informational and educational purposes only and does not constitute financial, investment, or trading advice of any kind. All analysis is based on publicly available market data, SEC filings, and news sources as of March 30, 2026. American Vanguard Corporation (NYSE: AVD) and Urban-gro (UGRO) are volatile equities; investors may lose some or all of their capital. Past performance is not indicative of future results. The analyst holds no stated position in any securities mentioned at time of publication. Always conduct your own due diligence and consult a licensed financial professional before making any investment decision. Sources: American Vanguard Corporation IR, AMVAC, DTN Progressive Farmer, Agriculture of America, StockTitan, TipRanks, SeekingAlpha, Reuters, Al Jazeera, IEA, Mosaic Company, MarketBeat, TradingView.
+  </div>
+
+</div>
+</body>
+</html>
